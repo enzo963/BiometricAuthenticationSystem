@@ -60,7 +60,6 @@
                             <!-- إضافة توهج بسيط للشعار ليتناسب مع التصميم -->
                             <DropShadowEffect Color="#4E46B4" BlurRadius="15" ShadowDepth="0" Opacity="0.5"/>
                         </Image.Effect>
-
                     </Image>
 
 
@@ -109,7 +108,7 @@
                     <PasswordBox x:Name="txtPass" Background="Transparent" Foreground="White" 
                      BorderThickness="0" VerticalContentAlignment="Center" Height="40"/>
                 </Border>
-
+                <TextBlock Text="....." HorizontalAlignment="Center" Foreground="#6A5ACD" FontSize="24"/>
                 <Button x:Name="BtnSignIn" Height="55" Foreground="White" FontWeight="Bold" Margin="0,10,0,15" Click="BtnSignIn_Click" Cursor="Hand">
                     <Button.Effect>
                         <DropShadowEffect Color="#6A5ACD" BlurRadius="25" ShadowDepth="0" Opacity="0.6"/>

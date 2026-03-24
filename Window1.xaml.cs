@@ -43,10 +43,11 @@ namespace BioAthunSystem.Views
             {
                 Window2 form2 = new Window2();
                 form2.Show();
+                this.Close();
             }
             else
             {
-
+                
             }
         }
     }
