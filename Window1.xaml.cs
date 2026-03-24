@@ -22,32 +22,32 @@ namespace BioAthunSystem.Views
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            string userName = txtUser.Text;
-            string userPass = txtPass.Password;
-
-          
             
-            if (string.IsNullOrEmpty(userName) && string.IsNullOrEmpty(userPass))
-            {
-               MessageBox.Show("Enter User Name and Pass plz..");
-            }
-
-            if (userName == "aaa" && userPass == "123")
-            {
-               Window2 form2 = new Window2();
-               form2.Show();
-            }
-            else
-            {
-                
-            }
 
 
         }
 
         private void BtnSignIn_Click(object sender, RoutedEventArgs e)
         {
+            string userName = txtUser.Text;
+            string userPass = txtPass.Password;
 
+
+
+            if (string.IsNullOrEmpty(userName) && string.IsNullOrEmpty(userPass))
+            {
+                MessageBox.Show("Enter User Name and Pass plz..");
+            }
+
+            if (userName == "aaa" && userPass == "123")
+            {
+                Window2 form2 = new Window2();
+                form2.Show();
+            }
+            else
+            {
+
+            }
         }
     }
 }
