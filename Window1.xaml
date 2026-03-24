@@ -1,0 +1,148 @@
+﻿<Window x:Class="BioAthunSystem.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Login" Height="600" Width="1000"
+        WindowStartupLocation="CenterScreen" Background="#0A0E1A"
+        WindowStyle="None" AllowsTransparency="True">
+
+    <Border CornerRadius="20" Background="#FF0F1629">
+        <Grid Background="#FF0F1629">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="224*"/>
+                <ColumnDefinition Width="321*"/>
+                <ColumnDefinition Width="455*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Background="#FF0D1224" CornerRadius="20,0,0,20" Grid.ColumnSpan="2" HorizontalAlignment="Center" Width="545">
+                <StackPanel VerticalAlignment="Center" Margin="40">
+
+                    <StackPanel/>
+                </StackPanel>
+            </Border>
+
+            <StackPanel Width="540" Height="600" Grid.ColumnSpan="2" VerticalAlignment="Center"
+             Margin="0,0,0,0">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <!-- مساحة للنصوص -->
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- مساحة للشعار على اليمين -->
+                    </Grid.ColumnDefinitions>
+
+
+                    <!-- قسم النصوص -->
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock Text="B I O M E I T R I C " 
+                       FontSize="35" 
+                       Foreground="#4E46B4" 
+                       FontWeight="SemiBold" 
+                       Margin="0,55,0,0" 
+                       FontFamily="Felix Titling" Width="470" />
+
+                        <TextBlock Text="A T H U S Y S T E M " 
+                       FontSize="45" 
+                       Foreground="#FF7B7171" 
+                       FontWeight="SemiBold" 
+                       Margin="0,5,0,0" 
+                       FontFamily="Felix Titling" Width="472" />
+                    </StackPanel>
+
+                    <!--Logo Section-->
+                    <Image
+                       Source="/Figam/Logo.png"
+                       Height="100"
+                       Width="100"
+                       
+                       Stretch="Uniform" Margin="440,48,0,6">
+                        <Image.Effect>
+                            <!-- إضافة توهج بسيط للشعار ليتناسب مع التصميم -->
+                            <DropShadowEffect Color="#4E46B4" BlurRadius="15" ShadowDepth="0" Opacity="0.5"/>
+                        </Image.Effect>
+
+                    </Image>
+
+
+
+                </Grid>
+                <Rectangle Height="3" Margin="5,15" Opacity="0.5" HorizontalAlignment="Left" Width="200">
+                    <Rectangle.Fill>
+                        <!-- StartPoint="0,0" و EndPoint="1,0" تجعل التدرج يمتد من اليسار لليمين -->
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="#FF705DFF" Offset="0"/>
+                            <GradientStop Color="#FF0CD6FF" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+
+
+
+                <TextBlock 
+                    Text="Advanced facial recognition Technology for secure"
+                    Foreground="#FF746969"
+                    FontSize="20"
+                    Margin="30,0,0,0"
+                    FontFamily="Sakkal Majalla"
+                
+                    
+                />
+
+
+            </StackPanel>
+            <StackPanel Grid.Column="2" 
+            VerticalAlignment="Center" 
+            Margin="50,0,50,0" 
+            Height="480">
+
+                <TextBlock Text="Welcome Back" FontSize="30" Foreground="White" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <TextBlock Text="Sign in to continue" Foreground="#606060" Margin="0,0,0,45"/>
+
+                <TextBlock Text="USERNAME" Foreground="#4E46B4" FontSize="12" FontWeight="Bold" Margin="0,0,0,10"/>
+                <Border Background="#161B30" CornerRadius="10" Margin="0,0,0,25" Padding="12,2">
+                    <TextBox x:Name="txtUser" Background="Transparent" Foreground="White" 
+                 BorderThickness="0" FontSize="15" VerticalContentAlignment="Center" Height="40"/>
+                </Border>
+
+                <TextBlock Text="PASSWORD" Foreground="#4E46B4" FontSize="12" FontWeight="Bold" Margin="0,0,0,10"/>
+                <Border Background="#161B30" CornerRadius="10" Margin="0,0,0,18" Padding="12,2">
+                    <PasswordBox x:Name="txtPass" Background="Transparent" Foreground="White" 
+                     BorderThickness="0" VerticalContentAlignment="Center" Height="40"/>
+                </Border>
+
+                <Button x:Name="BtnSignIn" Height="55" Foreground="White" FontWeight="Bold" Margin="0,10,0,15" Click="BtnSignIn_Click" Cursor="Hand">
+                    <Button.Effect>
+                        <DropShadowEffect Color="#6A5ACD" BlurRadius="25" ShadowDepth="0" Opacity="0.6"/>
+                    </Button.Effect>
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border CornerRadius="12">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#6A5ACD" Offset="0"/>
+                                        <GradientStop Color="#00BFFF" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Content="Sign In"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <Button Content="Sign in with Face Recognition" Background="Transparent" 
+            BorderThickness="1" BorderBrush="#FF5779FF" Height="45" Foreground="#FF5D73FF" Click="Button_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="1" CornerRadius="12">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
+
+
+        </Grid>
+    </Border>
+</Window>
