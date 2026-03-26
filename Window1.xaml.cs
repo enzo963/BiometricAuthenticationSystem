@@ -12,18 +12,20 @@ namespace BioAthunSystem.Views
 {
     public partial class LoginWindow : Window
     {
-        private VideoCapture _capture; // كائن الكاميرا
-        private DispatcherTimer _timer; // مؤقت لتحديث الصورة
-
+        
+        
         public LoginWindow()
         {
             InitializeComponent();
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            Window2 window2 = new Window2();
+            window2.Show();
+            this.Close();
             
-
 
         }
 
@@ -42,12 +44,13 @@ namespace BioAthunSystem.Views
             if (userName == "aaa" && userPass == "123")
             {
                 Window2 form2 = new Window2();
+                
                 form2.Show();
                 this.Close();
             }
             else
             {
-                
+                SignStatus.Text = "Not found";
             }
         }
     }
