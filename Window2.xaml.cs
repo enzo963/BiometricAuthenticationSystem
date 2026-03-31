@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Resources;
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Threading;
-using BioAthunSystem.Views;
-using Emgu.CV.Face;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
+using OpenCvSharp.Face;
+using BioAthunSystem.Views; // تأكد أن هذا المسار صحيح لفتح نافذة اللوجن
 
 namespace Bio_Athun_System
 {
@@ -18,27 +16,90 @@ namespace Bio_Athun_System
         private DispatcherTimer timer;
         private CascadeClassifier? faceCascade;
 
+        private LBPHFaceRecognizer? recognizer;
+        private bool isTrained = false;
+        private Dictionary<int, string> userNames = new Dictionary<int, string>();
+
         public Window2()
         {
             InitializeComponent();
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
-            // تحميل الـ cascade بأمان
-            string cascadePath = System.IO.Path.Combine(
-                AppDomain.CurrentDomain.BaseDirectory, "Resources", "haarcascade_frontalface_default.xml");
-
+            string cascadePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "haarcascade_frontalface_default.xml");
             if (System.IO.File.Exists(cascadePath))
-            {
                 faceCascade = new CascadeClassifier(cascadePath);
-            }
-            else
-            {
-                MessageBox.Show($"ملف الكشف عن الوجوه غير موجود:\n{cascadePath}", "تحذير");
-            }
 
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(33);
             timer.Tick += Timer_Tick;
+
+            TrainModel();
+        }
+
+        private void TrainModel()
+        {
+            try
+            {
+                // 1. إعداد القوائم
+                List<Mat> faceImages = new List<Mat>();
+                List<int> faceLabels = new List<int>();
+                userNames.Clear(); // تفريغ القاموس القديم
+
+                // 2. سلسلة الاتصال (عدلها حسب اسم السيرفر عندك)
+                string connString = @"Data Source=ENZO\SQLEXPRESS;Initial Catalog=BioAuthDB;Integrated Security=True;TrustServerCertificate=True";
+
+                using (var conn = new Microsoft.Data.SqlClient.SqlConnection(connString))
+                {
+                    conn.Open();
+
+                    // أ. جلب أسماء المستخدمين لربط الـ ID بالاسم الظاهر على الشاشة
+                    string nameQuery = "SELECT Id, FullName FROM Users WHERE IsActive = 1";
+                    using (var cmd = new Microsoft.Data.SqlClient.SqlCommand(nameQuery, conn))
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            userNames.Add(reader.GetInt32(0), reader.GetString(1));
+                        }
+                    }
+
+                    // ب. جلب مسارات الصور لتدريب المحرك (Recognizer)
+                    string imgQuery = "SELECT UserId, ImagePath FROM Details WHERE IsActive = 1";
+                    using (var cmd = new Microsoft.Data.SqlClient.SqlCommand(imgQuery, conn))
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int userId = reader.GetInt32(0);
+                            string path = reader.GetString(1);
+
+                            if (System.IO.File.Exists(path))
+                            {
+                                // تحميل الصورة وتحويلها لرمادي وتصغيرها لضمان سرعة المعالجة
+                                Mat img = Cv2.ImRead(path, ImreadModes.Grayscale);
+                                Cv2.Resize(img, img, new OpenCvSharp.Size(100, 100));
+
+                                faceImages.Add(img);
+                                faceLabels.Add(userId);
+                            }
+                        }
+                    }
+                }
+
+                // 3. بدء تدريب المحرك إذا وجدت صور
+                if (faceImages.Count > 0)
+                {
+                    recognizer = LBPHFaceRecognizer.Create();
+                    // تحويل القوائم إلى مصفوفات ليفهمها OpenCV
+                    recognizer.Train(faceImages, faceLabels);
+                    isTrained = true;
+                    // MessageBox.Show("تم تحميل بيانات المستخدمين وتدريب النظام بنجاح!");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("خطأ في الربط مع قاعدة البيانات: " + ex.Message);
+            }
         }
 
         private void Timer_Tick(object? sender, EventArgs e)
@@ -46,13 +107,8 @@ namespace Bio_Athun_System
             try
             {
                 if (capture == null || !capture.IsOpened()) return;
-
-                // استخدام Grab + Retrieve بدلاً من Read (أكثر موثوقية)
-                bool grabbed = capture.Grab();
-                if (!grabbed) return;
-
+                if (!capture.Grab()) return;
                 capture.Retrieve(frame);
-
                 if (frame == null || frame.Empty()) return;
 
                 using (Mat display = frame.Clone())
@@ -64,55 +120,52 @@ namespace Bio_Athun_System
                             Cv2.CvtColor(display, gray, ColorConversionCodes.BGR2GRAY);
                             Cv2.EqualizeHist(gray, gray);
 
-                            var faces = faceCascade.DetectMultiScale(
-                                gray,
-                                scaleFactor: 1.1,
-                                minNeighbors: 5,
-                                flags: HaarDetectionTypes.ScaleImage,
-                                minSize: new OpenCvSharp.Size(60, 60)
-                            );
+                            // تحديد OpenCvSharp.Size لحل مشكلة التداخل
+                            var faces = faceCascade.DetectMultiScale(gray, 1.1, 5, HaarDetectionTypes.ScaleImage, new OpenCvSharp.Size(60, 60));
 
                             foreach (var faceRect in faces)
                             {
                                 Cv2.Rectangle(display, faceRect, Scalar.FromRgb(53, 141, 230), 3);
+
+                                if (isTrained && recognizer != null)
+                                {
+                                    using (Mat faceRegion = new Mat(gray, faceRect))
+                                    {
+                                        Cv2.Resize(faceRegion, faceRegion, new OpenCvSharp.Size(100, 100));
+
+                                        // حل مشكلة Predict للحصول على ID و Distance
+                                        int outLabel = -1;
+                                        double outConfidence = 0;
+                                        recognizer.Predict(faceRegion, out outLabel, out outConfidence);
+
+                                        string label = "Unknown";
+                                        if (outConfidence < 100) // العتبة
+                                        {
+                                            label = userNames.ContainsKey(outLabel) ? userNames[outLabel] : "Authorized";
+                                        }
+
+                                        Cv2.PutText(display, $"{label} ({Math.Round(outConfidence)})",
+                                            new OpenCvSharp.Point(faceRect.X, faceRect.Y - 10),
+                                            HersheyFonts.HersheyComplex, 0.6, Scalar.Yellow, 1);
+                                    }
+                                }
                             }
                         }
                     }
-
-                    Dispatcher.Invoke(() =>
-                    {
-                        CameraPreview.Source = display.ToBitmapSource();
-                    });
+                    Dispatcher.Invoke(() => { CameraPreview.Source = display.ToBitmapSource(); });
                 }
             }
-            catch (Exception ex)
-            {
-                timer.Stop();
-                MessageBox.Show($"خطأ في الكاميرا: {ex.Message}");
-            }
+            catch (Exception) { /* Handle error */ }
         }
+
 
         private void btnStartCapture_Click(object sender, RoutedEventArgs e)
         {
-            try
+            capture = new VideoCapture(0, VideoCaptureAPIs.DSHOW);
+            if (capture.IsOpened())
             {
-                capture = new VideoCapture(0, VideoCaptureAPIs.DSHOW); // DSHOW أفضل على Windows
-                capture.Set(VideoCaptureProperties.FrameWidth, 640);
-                capture.Set(VideoCaptureProperties.FrameHeight, 480);
-
-                if (capture.IsOpened())
-                {
-                    btnStartCapture.IsEnabled = false;
-                    timer.Start();
-                }
-                else
-                {
-                    MessageBox.Show("لم يتم العثور على الكاميرا!", "خطأ");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"فشل تشغيل الكاميرا: {ex.Message}");
+                btnStartCapture.IsEnabled = false;
+                timer.Start();
             }
         }
 
@@ -123,10 +176,9 @@ namespace Bio_Athun_System
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
-
+            StopCamera();
             LoginWindow loginWindow = new LoginWindow();
             loginWindow.Show();
-            StopCamera();
             this.Close();
         }
 
@@ -136,7 +188,6 @@ namespace Bio_Athun_System
             capture?.Release();
             capture?.Dispose();
             capture = null;
-            frame?.Dispose();
             CameraPreview.Source = null;
             btnStartCapture.IsEnabled = true;
         }

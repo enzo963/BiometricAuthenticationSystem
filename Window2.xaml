@@ -40,7 +40,7 @@
                     <DropShadowEffect Color="#6A5ACD" BlurRadius="40" ShadowDepth="0" Opacity="0.5"/>
                 </Border.Effect>
 
-                <Grid Width="400" Height="400" Margin="52,0,-58,-6">
+                <Grid Height="400" Margin="-4,-3,-139,-3">
                     <Image x:Name="CameraPreview" 
                Stretch="UniformToFill" 
                HorizontalAlignment="Center"
