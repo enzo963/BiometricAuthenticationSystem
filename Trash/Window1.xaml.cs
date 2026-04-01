@@ -22,7 +22,7 @@ namespace BioAthunSystem.Views
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Window2 window2 = new Window2();
+            FaceEnrollmentWindow window2 = new FaceEnrollmentWindow();
             window2.Show();
             this.Close();
             
@@ -43,7 +43,7 @@ namespace BioAthunSystem.Views
 
             if (userName == "aaa" && userPass == "123")
             {
-                Window2 form2 = new Window2();
+                FaceEnrollmentWindow form2 = new FaceEnrollmentWindow();
                 
                 form2.Show();
                 this.Close();

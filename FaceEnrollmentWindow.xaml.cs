@@ -9,7 +9,7 @@ using BioAthunSystem.Views; // تأكد أن هذا المسار صحيح لفت
 
 namespace Bio_Athun_System
 {
-    public partial class Window2 : System.Windows.Window
+    public partial class FaceEnrollmentWindow : System.Windows.Window
     {
         private VideoCapture? capture;
         private Mat frame = new Mat();
@@ -20,7 +20,7 @@ namespace Bio_Athun_System
         private bool isTrained = false;
         private Dictionary<int, string> userNames = new Dictionary<int, string>();
 
-        public Window2()
+        public FaceEnrollmentWindow()
         {
             InitializeComponent();
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;

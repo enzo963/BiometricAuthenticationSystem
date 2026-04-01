@@ -4,12 +4,12 @@ using System.Windows;
 
 namespace BioAthunSystem.Views
 {
-    public partial class RegisterWindow : Window
+    public partial class RegistrationWindow : Window
     {
         // سلسلة الاتصال بقاعدة البيانات (عدلها حسب سيرفرك)
-        private string connectionString = "Server=.; Database=BioAuthDB; Trusted_Connection=True; TrustServerCertificate=True;";
+        private string connectionString = @"Data Source=ENZO\SQLEXPRESS;Initial Catalog = BioAuthDB; Integrated Security = True; Trust Server Certificate=True";
 
-        public RegisterWindow()
+        public RegistrationWindow()
         {
             InitializeComponent();
         }
@@ -50,7 +50,7 @@ namespace BioAthunSystem.Views
 
                     // 3. إدراج المستخدم الجديد في جدول Users
                     // ملاحظة: في المشاريع الحقيقية يفضل تشفير كلمة المرور (Hashing)
-                    string insertQuery = @"INSERT INTO Users (FullName, Username, PasswordHash, IsActive, CreatedAt) 
+                    string insertQuery = @"INSERT INTO Users (FullName, Username, Password, IsActive, CreatedAt) 
                                          VALUES (@Name, @User, @Pass, 1, GETDATE());
                                          SELECT SCOPE_IDENTITY();"; // لجلب الـ ID الذي تم إنشاؤه للتو
 
@@ -72,7 +72,7 @@ namespace BioAthunSystem.Views
                             int newUserId = Convert.ToInt32(result);
 
                             // هنا نفتح صفحة الوجه
-                            Window2 faceEnrollment = new Window2();
+                            FaceEnrollmentWindow faceEnrollment = new FaceEnrollmentWindow();
                             // يمكنك إضافة خاصية في Window2 لاستقبال الـ newUserId
                             faceEnrollment.Show();
 
