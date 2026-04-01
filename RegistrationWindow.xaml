@@ -1,4 +1,4 @@
-﻿<Window x:Class="BioAthunSystem.Views.RegistrationWindow"
+﻿<Window x:Class="Bio_Athun_System.Views.RegistrationWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Register New User" Height="700" Width="1100"

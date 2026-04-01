@@ -5,9 +5,8 @@ using System.Windows.Threading;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
 using OpenCvSharp.Face;
-using BioAthunSystem.Views; // تأكد أن هذا المسار صحيح لفتح نافذة اللوجن
 
-namespace Bio_Athun_System
+namespace Bio_Athun_System.Views
 {
     public partial class FaceEnrollmentWindow : System.Windows.Window
     {
@@ -46,7 +45,7 @@ namespace Bio_Athun_System
                 userNames.Clear(); // تفريغ القاموس القديم
 
                 // 2. سلسلة الاتصال (عدلها حسب اسم السيرفر عندك)
-                string connString = @"Data Source=ENZO\SQLEXPRESS;Initial Catalog=BioAuthDB;Integrated Security=True;TrustServerCertificate=True";
+                string connString = @"Data Source=ENZO\SQLEXPRESS;Initial Catalog=BioAuthDB;Integrated Security=True;TrustServerCertificate=True;";
 
                 using (var conn = new Microsoft.Data.SqlClient.SqlConnection(connString))
                 {

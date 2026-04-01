@@ -2,12 +2,12 @@
 using Microsoft.Data.SqlClient;
 using System.Windows;
 
-namespace BioAthunSystem.Views
+namespace Bio_Athun_System.Views
 {
     public partial class RegistrationWindow : Window
     {
         // سلسلة الاتصال بقاعدة البيانات (عدلها حسب سيرفرك)
-        private string connectionString = @"Data Source=ENZO\SQLEXPRESS;Initial Catalog = BioAuthDB; Integrated Security = True; Trust Server Certificate=True";
+        private string connectionString = @"Data Source=ENZO\SQLEXPRESS;Initial Catalog=BioAuthDB;Integrated  Certificate=True";
 
         public RegistrationWindow()
         {
@@ -17,6 +17,8 @@ namespace BioAthunSystem.Views
         // حدث الضغط على زر إنشاء الحساب
         private void BtnRegister_Click(object sender, RoutedEventArgs e)
         {
+            string connString = @"Data Source=ENZO\SQLEXPRESS;Initial Catalog=BioAuthDB;Integrated Security=True;TrustServerCertificate=True;";
+
             string fullName = txtFullName.Text.Trim();
             string username = txtUser.Text.Trim();
             string password = txtPass.Password;
@@ -30,11 +32,10 @@ namespace BioAthunSystem.Views
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(connString))
                 {
                     conn.Open();
 
-                    // 2. التحقق من أن اسم المستخدم غير موجود مسبقاً
                     string checkUserQuery = "SELECT COUNT(*) FROM Users WHERE Username = @User";
                     using (SqlCommand checkCmd = new SqlCommand(checkUserQuery, conn))
                     {
@@ -48,8 +49,7 @@ namespace BioAthunSystem.Views
                         }
                     }
 
-                    // 3. إدراج المستخدم الجديد في جدول Users
-                    // ملاحظة: في المشاريع الحقيقية يفضل تشفير كلمة المرور (Hashing)
+                    
                     string insertQuery = @"INSERT INTO Users (FullName, Username, Password, IsActive, CreatedAt) 
                                          VALUES (@Name, @User, @Pass, 1, GETDATE());
                                          SELECT SCOPE_IDENTITY();"; // لجلب الـ ID الذي تم إنشاؤه للتو

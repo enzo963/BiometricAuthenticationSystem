@@ -1,4 +1,4 @@
-﻿<Window x:Class="Bio_Athun_System.FaceEnrollmentWindow"
+﻿<Window x:Class="Bio_Athun_System.Views.FaceEnrollmentWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="BioAuth System" Height="650" Width="1000"
