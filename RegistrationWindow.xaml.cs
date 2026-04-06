@@ -7,8 +7,7 @@ namespace Bio_Athun_System.Views
     public partial class RegistrationWindow : Window
     {
         // سلسلة الاتصال بقاعدة البيانات (عدلها حسب سيرفرك)
-        private string connectionString = @"Data Source=ENZO\SQLEXPRESS;Initial Catalog=BioAuthDB;Integrated  Certificate=True";
-
+        private string connectionString = @"Data Source=ENZO\SQLEXPRESS;Initial Catalog=BioAuthDB;Integrated Security=True;TrustServerCertificate=True;";
         public RegistrationWindow()
         {
             InitializeComponent();
@@ -72,7 +71,7 @@ namespace Bio_Athun_System.Views
                             int newUserId = Convert.ToInt32(result);
 
                             // هنا نفتح صفحة الوجه
-                            FaceEnrollmentWindow faceEnrollment = new FaceEnrollmentWindow();
+                            loginFaceWindow faceEnrollment = new loginFaceWindow();
                             // يمكنك إضافة خاصية في Window2 لاستقبال الـ newUserId
                             faceEnrollment.Show();
 

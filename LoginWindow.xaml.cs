@@ -10,8 +10,7 @@ namespace Bio_Athun_System.Views
     public partial class LoginWindow : Window
     {
 
-        private string connectionString = @"Data Source=ENZO\SQLEXPRESS;Initial Catalog=BioAuthDB;Integrated  Certificate=True";
-        
+        private string connectionString = @"Data Source=ENZO\SQLEXPRESS;Initial Catalog=BioAuthDB;Integrated Security=True;TrustServerCertificate=True;";
 
         public LoginWindow()
         {
@@ -23,7 +22,7 @@ namespace Bio_Athun_System.Views
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             // فتح نافذة التعرف على الوجه
-            FaceEnrollmentWindow window2 = new FaceEnrollmentWindow();
+            loginFaceWindow window2 = new loginFaceWindow();
             window2.Show();
             this.Close();
         }
@@ -31,7 +30,8 @@ namespace Bio_Athun_System.Views
 
         private void BtnSignIn_Click(object sender, RoutedEventArgs e)
         {
-            string connString = @"Data Source=ENZO\SQLEXPRESS;Initial Catalog=BioAuthDB;Integrated Security=True;TrustServerCertificate=True;";
+            string connString = @"Data Source=ENZO\SQLEXPRESS;Initial Catalog=BioAuthDB;Integrated Security=True;TrustServerCertificate=True";
+
             string userName = txtUser.Text.Trim();
             string userPass = txtPass.Password.Trim();
 
@@ -46,34 +46,35 @@ namespace Bio_Athun_System.Views
                 try
                 {
                     conn.Open();
-
-                    // ✅ LTRIM/RTRIM تحذف الفراغات من قاعدة البيانات
-                    string query = @"SELECT COUNT(*) FROM Users 
-                                WHERE LTRIM(RTRIM(Username)) = @Username 
-                                AND LTRIM(RTRIM(Password)) = @Password";
+                    // نطلب المعرف والاسم (وأي عمود آخر تحتاجه النافذة التالية)
+                    string query = @"SELECT Id, FullName FROM Users 
+                        WHERE LTRIM(RTRIM(Username)) = @Username 
+                        AND LTRIM(RTRIM(Password)) = @Password";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@Username", userName);
                         cmd.Parameters.AddWithValue("@Password", userPass);
 
-                        int count = Convert.ToInt32(cmd.ExecuteScalar());
-
-                        if (count > 0)
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            DashboardWindow dash = new DashboardWindow();
-                            dash.Show();
-                            this.Close();
-                        }
-                        else
-                        {
-                            // 🔍 للتشخيص: شوف كم مستخدم موجود
-                            string debugQuery = "SELECT COUNT(*) FROM Users";
-                            using (SqlCommand debugCmd = new SqlCommand(debugQuery, conn))
+                            if (reader.Read()) // إذا وجد مستخدم مطابق
                             {
-                                int total = Convert.ToInt32(debugCmd.ExecuteScalar());
-                                //SignStatus.Text = $"Not found. Total users in DB: {total}";
+                                // جلب البيانات من قاعدة البيانات
+                                int id = reader.GetInt32(0);
+                                string name = reader.GetString(1);
+                                string userRole = "User"; // أو اجلبها من القارئ إذا كانت موجودة في الجدول
 
+                                // تمرير البيانات للنافذة كما تطلب (UserID, Username, Role)
+                                DashboardWindow dash = new DashboardWindow(id, name, userRole);
+
+                                App.Current.MainWindow = dash;
+                                dash.Show();
+                                this.Close();
+                            }
+                            else
+                            {
+                                MessageBox.Show("Invalid Username or Password.");
                             }
                         }
                     }

@@ -8,7 +8,7 @@ using OpenCvSharp.Face;
 
 namespace Bio_Athun_System.Views
 {
-    public partial class FaceEnrollmentWindow : System.Windows.Window
+    public partial class loginFaceWindow : System.Windows.Window
     {
         private VideoCapture? capture;
         private Mat frame = new Mat();
@@ -19,7 +19,7 @@ namespace Bio_Athun_System.Views
         private bool isTrained = false;
         private Dictionary<int, string> userNames = new Dictionary<int, string>();
 
-        public FaceEnrollmentWindow()
+        public  loginFaceWindow()
         {
             InitializeComponent();
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;

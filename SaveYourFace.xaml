@@ -1,0 +1,200 @@
+﻿<Window x:Class="Bio_Athun_System.SaveYourFace"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Face Enrollment" Height="750" Width="1100"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None" AllowsTransparency="True"
+        Background="Transparent">
+
+    <Window.Resources>
+        <Storyboard x:Key="PulseRing1">
+            <DoubleAnimation Storyboard.TargetName="ring1"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                             From="1" To="1.18" Duration="0:0:1.6"
+                             AutoReverse="True" RepeatBehavior="Forever"/>
+            <DoubleAnimation Storyboard.TargetName="ring1"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                             From="1" To="1.18" Duration="0:0:1.6"
+                             AutoReverse="True" RepeatBehavior="Forever"/>
+            <DoubleAnimation Storyboard.TargetName="ring1"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0.55" To="0.05" Duration="0:0:1.6"
+                             AutoReverse="True" RepeatBehavior="Forever"/>
+        </Storyboard>
+
+        <Storyboard x:Key="PulseRing2">
+            <DoubleAnimation Storyboard.TargetName="ring2"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                             From="1" To="1.35" Duration="0:0:2.2"
+                             AutoReverse="True" RepeatBehavior="Forever" BeginTime="0:0:0.4"/>
+            <DoubleAnimation Storyboard.TargetName="ring2"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                             From="1" To="1.35" Duration="0:0:2.2"
+                             AutoReverse="True" RepeatBehavior="Forever" BeginTime="0:0:0.4"/>
+        </Storyboard>
+
+        <Storyboard x:Key="ScanLineAnim">
+            <DoubleAnimation Storyboard.TargetName="scanLine"
+                             Storyboard.TargetProperty="(Canvas.Top)"
+                             From="0" To="338" Duration="0:0:2.5"
+                             AutoReverse="True" RepeatBehavior="Forever"/>
+            <DoubleAnimation Storyboard.TargetName="scanLine"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0.2" To="1" Duration="0:0:0.5"
+                             AutoReverse="True" RepeatBehavior="Forever"/>
+        </Storyboard>
+
+        <Storyboard x:Key="WindowFadeIn">
+            <DoubleAnimation Storyboard.TargetName="mainBorder"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0" To="1" Duration="0:0:0.5"/>
+        </Storyboard>
+
+        <Storyboard x:Key="StatusBlink">
+            <DoubleAnimation Storyboard.TargetName="statusDot"
+                             Storyboard.TargetProperty="Opacity"
+                             From="1" To="0.2" Duration="0:0:0.7"
+                             AutoReverse="True" RepeatBehavior="Forever"/>
+        </Storyboard>
+    </Window.Resources>
+
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource WindowFadeIn}"/>
+            <BeginStoryboard Storyboard="{StaticResource PulseRing1}"/>
+            <BeginStoryboard Storyboard="{StaticResource PulseRing2}"/>
+            <BeginStoryboard Storyboard="{StaticResource StatusBlink}"/>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <Border x:Name="mainBorder" CornerRadius="24" Background="#0F1629" BorderBrush="#212745" BorderThickness="1">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="320"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Background="#080D1C" CornerRadius="24,0,0,24">
+                <StackPanel Margin="30,50">
+                    <TextBlock Text="B I O M E T R I C" 
+                               FontSize="12" 
+                               Foreground="#4E46B4" 
+                               FontWeight="SemiBold"/>
+                    <TextBlock Text="FACE SCAN" FontSize="28" Foreground="White" FontWeight="Bold" Margin="0,5,0,40"/>
+
+                    <TextBlock Text="1. Position Face" Foreground="White" Margin="0,10" FontSize="14"/>
+                    <TextBlock Text="2. Open Camera" Foreground="White" Margin="0,10" FontSize="14"/>
+                    <TextBlock Text="3. Capture Image" Foreground="White" Margin="0,10" FontSize="14"/>
+
+                    <StackPanel Margin="20,180,20,20">
+                        <Button x:Name="btnStartCamera" Content="START SCANNING" 
+            Margin="0,10,0,5" Height="50" Cursor="Hand"
+            Background="#4E46B4" Foreground="White" FontWeight="Bold"
+            Click="BtnStartCamera_Click">
+                            
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                        <Button x:Name="btnCapture" 
+                                Content="CAPTURE FACE" 
+                                Height="45" Margin="0,1,0,5" Cursor="Hand"
+                                Background="#3F3793" Foreground="White"
+                                
+                                Click="BtnCapture_Click">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </Button.Resources>
+
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Opacity" Value="0.9"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Opacity" Value="1"/>
+                                            <Setter Property="Effect">
+                                                <Setter.Value>
+                                                    <DropShadowEffect Color="#00CCFF" BlurRadius="15" ShadowDepth="0"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button x:Name="btnbackToDashboard" Content="GO TO DASHBOARD" 
+                                Height="45" Margin="0,1,0,5" Cursor="Hand"
+                                Background="#3F3793" Foreground="White"
+                                Click="BtnBackToDashboard_Click">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="8"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+
+                        <Button x:Name="btnbackToLogin" Content="TRY FACE LOGIN" 
+            Height="45" Margin="0,5,0,5" Cursor="Hand"
+            Background="Transparent" Foreground="#4E46B4" 
+            BorderBrush="#4E46B4" BorderThickness="2"
+            Click="BtnBackToLogin_Click">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="8"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Grid Grid.Column="1">
+                <Button Content="✕" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="20"
+                        Foreground="Gray" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="BtnClose_Click"/>
+
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="Position your face in the frame" Foreground="White" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,30"/>
+
+                    <Grid Width="400" Height="400">
+                        <Ellipse x:Name="ring2" Stroke="#00BFFF" StrokeThickness="1" Opacity="0.2">
+                            <Ellipse.RenderTransform>
+                                <ScaleTransform CenterX="200" CenterY="200"/>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                        <Ellipse x:Name="ring1" Stroke="#4E46B4" StrokeThickness="1.5" Opacity="0.4">
+                            <Ellipse.RenderTransform>
+                                <ScaleTransform CenterX="200" CenterY="200"/>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+
+                        <Border Width="340" Height="340" CornerRadius="170" BorderBrush="#00BFFF" BorderThickness="2" ClipToBounds="True">
+                            <Grid>
+                                <Border x:Name="cameraPlaceholder" Background="#0A0E1A">
+                                    <TextBlock Text="Camera Off" Foreground="#303050" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                </Border>
+                                <Image x:Name="imgCamera" Stretch="UniformToFill"/>
+
+                                <Canvas x:Name="scanCanvas" Visibility="Visible">
+                                    <Rectangle x:Name="scanLine" Width="340" Height="2" Fill="#00BFFF" Opacity="0.8"/>
+                                </Canvas>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,25,0,0">
+                        <Ellipse x:Name="statusDot" Width="10" Height="10" Fill="#00FF00" Margin="0,0,10,0"/>
+                        <TextBlock x:Name="txtStatus" 
+                                   Text="R E A D Y  F O R  S C A N N I N G" 
+                                   Foreground="#4E46B4" 
+                                   FontWeight="Bold" 
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>
