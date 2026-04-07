@@ -105,17 +105,12 @@ namespace Bio_Athun_System.Views
 
         private void btnEnrollFace_Click(object sender, RoutedEventArgs e)
         {
-            loginFaceWindow enrollFace = new loginFaceWindow();
-            enrollFace.Show();
+            SaveYourFace FaceScaen = new SaveYourFace();
+            FaceScaen.Show();
             this.Close();
         }
 
-        private void btnEnrollFace_Checked(object sender, RoutedEventArgs e)
-        {
-            SaveYourFace face_Enrollmen = new SaveYourFace();
-            face_Enrollmen.Show();
-            this.Close();
-        }
+        
 
         private void Logout_Click(object sender, RoutedEventArgs e)
         {

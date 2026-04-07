@@ -16,15 +16,20 @@ namespace Bio_Athun_System
         private FilterInfoCollection videoDevices;
         private VideoCaptureDevice videoSource;
 
+        private int _currentUserId;
+        private string _currentUserName;
+        private string _currentUserRole;
+
         // متغير لحفظ الإطار الحالي للتقاطه عند الطلب
         private Bitmap currentFrame;
 
         // سلسلة الاتصال بقاعدة البيانات (قم بتغييرها حسب بياناتك)
         private string connectionString = @"Data Source=ENZO\SQLEXPRESS;Initial Catalog=BioAuthDB;Integrated Security=True;TrustServerCertificate=True";
 
-        public SaveYourFace()
+        public SaveYourFace(int userID)
         {
             InitializeComponent();
+            _currentUserId = userID;
         }
 
         private void BtnStartCamera_Click(object sender, RoutedEventArgs e)
@@ -92,17 +97,17 @@ namespace Bio_Athun_System
                     byte[] imageBytes;
                     using (MemoryStream ms = new MemoryStream())
                     {
+                        // نحفظ الصورة بصيغة Jpeg لتقليل الحجم داخل القاعدة
                         currentFrame.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
                         imageBytes = ms.ToArray();
                     }
 
-                    // 2. حفظ الصورة في قاعدة البيانات (مثال لمستخدم معين بـ ID = 1)
-                    SaveImageToDatabase(imageBytes, 1);
+                    // 2. إرسال البايتات إلى قاعدة البيانات
+                    // ملاحظة: رقم 1 هو ID تجريبي للمستخدم
+                    SaveImageToDatabase(imageBytes, _currentUserId);
 
-                    txtStatus.Text = "FACE CAPTURED & SAVED!";
-                    txtStatus.Foreground = System.Windows.Media.Brushes.LimeGreen;
-
-                    MessageBox.Show("تم التقاط الصورة وحفظها بنجاح في النظام");
+                    txtStatus.Text = "FACE SAVED SUCCESSFULLY!";
+                    MessageBox.Show("تم حفظ بصمة الوجه بنجاح");
                 }
                 catch (Exception ex)
                 {
@@ -117,17 +122,31 @@ namespace Bio_Athun_System
 
         private void SaveImageToDatabase(byte[] imageContent, int userId)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            try
             {
-                // افترضنا أن اسم الجدول Users وحقل الصورة UserImage
-                string query = "UPDATE Users SET UserImage = @img WHERE UserId = @id";
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    // نستخدم INSERT لإضافة سجل جديد في جدول Details
+                    string query = "INSERT INTO Details (UserId, ImagePath, CreatedAt) " +
+                                   "VALUES (@uid, @img, @date)";
 
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@img", imageContent);
-                cmd.Parameters.AddWithValue("@id", userId);
+                    SqlCommand cmd = new SqlCommand(query, conn);
 
-                conn.Open();
-                cmd.ExecuteNonQuery();
+                    // تحديد الأنواع بدقة يضمن عدم حدوث أخطاء تحويل مرة أخرى
+                    cmd.Parameters.Add("@uid", System.Data.SqlDbType.Int).Value = userId;
+                    cmd.Parameters.Add("@img", System.Data.SqlDbType.VarBinary).Value = imageContent;
+                    cmd.Parameters.Add("@date", System.Data.SqlDbType.DateTime).Value = DateTime.Now;
+
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+
+                    // لإعلامك بنجاح العملية في نافذة الـ Output أثناء البرمجة
+                    System.Diagnostics.Debug.WriteLine("Done! Image saved to SQL.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("فشل الحفظ في قاعدة البيانات: " + ex.Message);
             }
         }
 
@@ -135,7 +154,7 @@ namespace Bio_Athun_System
         private void BtnBackToDashboard_Click(object sender, RoutedEventArgs e)
         {
             StopCamera();
-            DashboardWindow dashboard = new DashboardWindow(1, "User Name", "Admin");
+            DashboardWindow dashboard = new DashboardWindow(_currentUserId , _currentUserName, _currentUserRole);
             dashboard.Show();
             this.Close();
         }

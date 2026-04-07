@@ -104,12 +104,16 @@
                     <RadioButton x:Name="btnEnrollFace"
                                  Style="{StaticResource MenuButtonStyle}"
                                  Content="Enroll New Face"
-                                 Click="btnEnrollFace_Click" Checked="btnEnrollFace_Checked">
+                                 Click="btnEnrollFace_Click">
+
                         <RadioButton.Effect>
                             <DropShadowEffect Color="#6A5ACD" BlurRadius="12"
-                                              Opacity="0.4" ShadowDepth="0"/>
+                          Opacity="0.4" ShadowDepth="0"/>
                         </RadioButton.Effect>
+
                     </RadioButton>
+      
+
 
                     <RadioButton Style="{StaticResource MenuButtonStyle}" Content="Access Logs"/>
                     <RadioButton Style="{StaticResource MenuButtonStyle}"
