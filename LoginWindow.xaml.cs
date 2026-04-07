@@ -21,10 +21,47 @@ namespace Bio_Athun_System.Views
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            // فتح نافذة التعرف على الوجه
-            loginFaceWindow window2 = new loginFaceWindow();
-            window2.Show();
-            this.Close();
+            string username = txtUser.Text; // قراءة الاسم من الحقل x:Name="txtUser"
+
+            if (string.IsNullOrEmpty(username))
+            {
+                SignStatus.Text = "Please enter your username first!";
+                return;
+            }
+
+            try
+            {
+                string connString = @"Data Source=ENZO\SQLEXPRESS;Initial Catalog=BioAuthDB;Integrated Security=True;TrustServerCertificate=True;";
+                using (var conn = new Microsoft.Data.SqlClient.SqlConnection(connString))
+                {
+                    conn.Open();
+                    // البحث عن الـ ID والاسم الكامل
+                    string query = "SELECT Id FROM Users WHERE FullName = @name OR Username = @name";
+                    using (var cmd = new Microsoft.Data.SqlClient.SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@name", username);
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null)
+                        {
+                            int userId = Convert.ToInt32(result);
+
+                            // إرسال الـ ID الحقيقي للنافذة التالية
+                            loginFaceWindow window2 = new loginFaceWindow(userId);
+                            window2.Show();
+                            this.Close();
+                        }
+                        else
+                        {
+                            SignStatus.Text = "User not found!";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Connection Error: " + ex.Message);
+            }
         }
 
 

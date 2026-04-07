@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Bio_Athun_System;
+using Microsoft.VisualBasic.ApplicationServices;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace Bio_Athun_System.Views
 {
@@ -12,14 +14,16 @@ namespace Bio_Athun_System.Views
     {
         private readonly string _connectionString =
             @"Data Source=ENZO\SQLEXPRESS;Initial Catalog=BioAuthDB;Integrated Security=True;TrustServerCertificate=True;";
-
         private readonly int _currentUserId;
         private readonly string _currentUserName;
         private readonly string _currentUserRole;
 
+
         public DashboardWindow(int userId, string userName, string userRole)
         {
             InitializeComponent();
+
+
             _currentUserId = userId;
             _currentUserName = userName;
             _currentUserRole = userRole;
@@ -105,8 +109,8 @@ namespace Bio_Athun_System.Views
 
         private void btnEnrollFace_Click(object sender, RoutedEventArgs e)
         {
-            SaveYourFace FaceScaen = new SaveYourFace();
-            FaceScaen.Show();
+            SaveYourFace saveFace = new SaveYourFace(_currentUserId, _currentUserName, _currentUserRole);
+            saveFace.Show();
             this.Close();
         }
 

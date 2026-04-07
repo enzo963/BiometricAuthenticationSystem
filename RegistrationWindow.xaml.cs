@@ -71,8 +71,7 @@ namespace Bio_Athun_System.Views
                             int newUserId = Convert.ToInt32(result);
 
                             // هنا نفتح صفحة الوجه
-                            loginFaceWindow faceEnrollment = new loginFaceWindow();
-                            // يمكنك إضافة خاصية في Window2 لاستقبال الـ newUserId
+                            loginFaceWindow faceEnrollment = new loginFaceWindow(newUserId);  // يمكنك إضافة خاصية في Window2 لاستقبال الـ newUserId
                             faceEnrollment.Show();
 
                             this.Close(); // إغلاق صفحة التسجيل
